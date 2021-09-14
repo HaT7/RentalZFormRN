@@ -22,7 +22,7 @@ export const FormCover = styled.View`
 export const Title = styled(Text)`
   font-size: 40px;
   text-align: center;
-  color: ${(props) => props.theme.colors.ui.primary};
+  color: ${(props) => props.theme.colors.brand.primary};
   margin-bottom: ${(props) => props.theme.space[3]};
 `;
 
@@ -36,12 +36,15 @@ export const FormContainer = styled.View`
 export const FormInput = styled(TextInput).attrs({
   mode: "outlined",
 })`
+  border-color: ${(props) => props.theme.colors.ui.secondary};
   width: 300px;
 `;
 
 export const FormMultiInput = styled(TextInput).attrs({
   mode: "outlined",
 })`
+  color: ${(props) => props.theme.colors.ui.secondary};
+  border-color: ${(props) => props.theme.colors.ui.secondary};
   width: 300px;
 `;
 

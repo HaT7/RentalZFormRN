@@ -8,6 +8,12 @@ import {
 } from "@expo-google-fonts/oswald";
 import { useFonts as useLato, Lato_400Regular } from "@expo-google-fonts/lato";
 import InformationFormScreen from "./src/features/InformationForm/screens/informationForm.screen";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import HomeScreen from "./src/features/Home/screens/HomeScreen";
+import ViewAll from "./src/features/ViewAll/screens/ViewAll";
+
+const Stack = createStackNavigator();
 
 export default function App() {
   const [oswaldLoaded] = useOswald({
@@ -24,9 +30,54 @@ export default function App() {
 
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <InformationFormScreen />
-      </ThemeProvider>
+      <NavigationContainer>
+        <ThemeProvider theme={theme}>
+          <Stack.Navigator initialRouteName="HomeScreen">
+            <Stack.Screen
+              name="HomeScreen"
+              component={HomeScreen}
+              options={{
+                title: "Registro de Usuários",
+                headerStyle: {
+                  backgroundColor: "#2992C4",
+                },
+                headerTintColor: "#fff",
+                headerTitleStyle: {
+                  fontWeight: "bold",
+                },
+              }}
+            />
+            <Stack.Screen
+              name="InformationFormScreen"
+              component={InformationFormScreen}
+              options={{
+                title: "Insert Information",
+                headerStyle: {
+                  backgroundColor: "#2992C4",
+                },
+                headerTintColor: "#fff",
+                headerTitleStyle: {
+                  fontWeight: "bold",
+                },
+              }}
+            />
+            <Stack.Screen
+              name="ViewAll"
+              component={ViewAll}
+              options={{
+                title: "ViewAll",
+                headerStyle: {
+                  backgroundColor: "#2992C4",
+                },
+                headerTintColor: "#fff",
+                headerTitleStyle: {
+                  fontWeight: "bold",
+                },
+              }}
+            />
+          </Stack.Navigator>
+        </ThemeProvider>
+      </NavigationContainer>
       <ExpoStatusBar style="auto" />
     </>
   );

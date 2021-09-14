@@ -10,11 +10,17 @@ import {
   ErrorContainer,
   FormButton,
 } from "../components/InformationFrom.styles";
+import { Alert } from "react-native";
+import { Paragraph } from "react-native-paper";
 import { Picker } from "../../../components/picker/picker.component";
 import { Spacer } from "../../../components/spacer/spacer.component";
 import { ActivityIndicator, Colors } from "react-native-paper";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Text } from "../../../components/typography/text.component";
+import { DatabaseConnection } from "../../../services/dbHelper";
+import Confirmationcomponent from "../components/Confirmation.component";
+
+const db = DatabaseConnection.getConnection();
 
 const validateForm = (errors) => {
   let valid = true;
@@ -61,10 +67,11 @@ const initialState = {
   },
 };
 
-function InformationFormScreen() {
+function InformationFormScreen({ navigation }) {
   const [values, setValues] = useState(initialState);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     console.log(values);
@@ -82,6 +89,10 @@ function InformationFormScreen() {
     setValues({ ...values, dateAdded: date });
     hideDatePicker();
   };
+
+  const showDialog = () => setVisible(true);
+
+  const hideDialog = () => setVisible(false);
 
   const handleChange = (feild, value) => {
     let { errors } = values;
@@ -196,17 +207,67 @@ function InformationFormScreen() {
 
   const handlePress = () => {
     if (isNotEmpty()) {
-      console.log("fdsfdsaf");
       if (validateForm(values.errors)) {
-        alert("Created successfully.");
+        showDialog();
       }
     } else {
-      console.log("fdsfdsaf222222");
       validateForm(values.errors);
     }
   };
 
-  const { errors } = values;
+  const {
+    propertyType,
+    bedroom,
+    dateAdded,
+    monthlyRentPrice,
+    furnitureType,
+    note,
+    reporterName,
+    errors,
+  } = values;
+
+  const saveData = () => {
+    db.transaction(function (tx) {
+      tx.executeSql(
+        "INSERT INTO table_info (PropertyType, Bedrooms, DateAddRent,MonthlyRentPrice,FurnitureType,Notes,ReporterName) VALUES (?,?,?,?,?,?,?)",
+        [
+          propertyType,
+          bedroom,
+          dateAdded.toDateString(),
+          monthlyRentPrice,
+          furnitureType,
+          note,
+          reporterName,
+        ],
+        (tx, results) => {
+          console.log("Results", results.rowsAffected);
+          if (results.rowsAffected > 0) {
+            Alert.alert(
+              "Success",
+              "Insert data successfully !!!",
+              [
+                {
+                  text: "Ok",
+                  onPress: () => navigation.navigate("HomeScreen"),
+                },
+              ],
+              { cancelable: false }
+            );
+          } else {
+            alert("Error insert data ");
+          }
+        }
+      );
+    });
+  };
+
+  let content = `    Property Type ${propertyType} \n 
+    Bedrooms: ${bedroom} \n
+    Date Add Rent: ${dateAdded.toDateString()} \n
+    Monthly Rent Price: ${monthlyRentPrice} \n
+    Furniture Type: ${furnitureType} \n
+    Note: ${note} \n
+    Reporter Name: ${reporterName}`;
 
   return (
     <FormBackground>
@@ -257,6 +318,7 @@ function InformationFormScreen() {
           label="Date Add Rent"
           textContentType="none"
           autoCapitalize="none"
+          underlineColorAndroid="transparent"
           value={values.dateAdded.toDateString()}
           onFocus={showDatePicker}
         />
@@ -323,6 +385,12 @@ function InformationFormScreen() {
           )}
         </Spacer>
       </FormContainer>
+      <Confirmationcomponent
+        visible={visible}
+        hideDialog={hideDialog}
+        onSuccess={saveData}
+        content={content}
+      />
     </FormBackground>
   );
 }
