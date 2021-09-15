@@ -11,7 +11,6 @@ import {
   FormButton,
 } from "../components/InformationFrom.styles";
 import { Alert } from "react-native";
-import { Paragraph } from "react-native-paper";
 import { Picker } from "../../../components/picker/picker.component";
 import { Spacer } from "../../../components/spacer/spacer.component";
 import { ActivityIndicator, Colors } from "react-native-paper";
@@ -227,6 +226,7 @@ function InformationFormScreen({ navigation }) {
   } = values;
 
   const saveData = () => {
+    setLoading(true);
     db.transaction(function (tx) {
       tx.executeSql(
         "INSERT INTO table_info (PropertyType, Bedrooms, DateAddRent,MonthlyRentPrice,FurnitureType,Notes,ReporterName) VALUES (?,?,?,?,?,?,?)",
@@ -240,7 +240,7 @@ function InformationFormScreen({ navigation }) {
           reporterName,
         ],
         (tx, results) => {
-          console.log("Results", results.rowsAffected);
+          setLoading(false);
           if (results.rowsAffected > 0) {
             Alert.alert(
               "Success",
@@ -255,6 +255,7 @@ function InformationFormScreen({ navigation }) {
             );
           } else {
             alert("Error insert data ");
+            setLoading(false);
           }
         }
       );
