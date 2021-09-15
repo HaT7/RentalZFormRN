@@ -37,7 +37,7 @@ export default function App() {
               name="HomeScreen"
               component={HomeScreen}
               options={{
-                title: "Registro de Usuários",
+                title: "Home",
                 headerStyle: {
                   backgroundColor: "#2992C4",
                 },
