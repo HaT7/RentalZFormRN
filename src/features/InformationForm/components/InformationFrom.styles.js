@@ -46,6 +46,7 @@ export const FormMultiInput = styled(TextInput).attrs({
   color: ${(props) => props.theme.colors.ui.secondary};
   border-color: ${(props) => props.theme.colors.ui.secondary};
   width: 300px;
+  height: 80px;
 `;
 
 export const FormMaskInput = styled(MaskedTextInput)`
